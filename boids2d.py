@@ -174,9 +174,13 @@ class boidrender():
         # Separation slider
         global root_sep
         if root_sep:
-            sepres = 0.1, sepmax = 100.0, sepint = 20
+            sepres = 0.1
+            sepmax = 100.0
+            sepint = 20
         else:
-            sepres = 0.01, sepmax = 1, sepint = 0.1
+            sepres = 0.01
+            sepmax = 1
+            sepint = 0.1
         self.ss = tk.Scale(self.win, label = "Separation Weight",\
                       to = 100.0, resolution = sepres, command = self.setseparate,\
                       tickinterval = 20, length = 250)
