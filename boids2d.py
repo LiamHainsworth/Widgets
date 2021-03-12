@@ -1,11 +1,28 @@
 #! /usr/bin/env python3
 
+# Author: Liam Hainsworth
+# Date: March 12, 2021
+#
+# Description: A basic 2D implementation of the boids flocking algorithm with capability for
+#       real-time adjustment of algorithm parameters through a series of sliders
+#
+# Requires tkinter and numpy to be installed
+#
+
 import tkinter as tk
 from tkinter import ttk
 import random
 import numpy as np
 
-
+# Object representing a single boid.
+#
+# Each object several main components:
+# - a position vector representing their position on the screen
+# - a heading vector representing the direction they are travelling with a magnitude of
+#   their velocity
+# - a set of parameter values governing their interaction with other boid objects, namely
+#   the weights of the separation, alignment and coherence operations as well as the distance
+#   at which they are capable of sensing other boid objects
 class boid2D():
     def __init__(self, pos, idnum, \
                  senserange_ = 1, separate_ = 1, align_ = 1, cohere_ = 1, velocity_ = 1):
@@ -30,7 +47,7 @@ class boid2D():
         bounce = False
         global root_sep
         root_sep = True
-
+        
     # Find any boids within sensing range
     def findnear(self, boidarr):
         global senserange
@@ -45,7 +62,7 @@ class boid2D():
                     if self.idnum != boid.idnum:
                         subarr.append(boid)
         return subarr
-
+    
     # Adjusts the heading of a boid using the properties of nearby boids
     #
     # Heading adjustment uses the follwing factors:
@@ -58,7 +75,8 @@ class boid2D():
     #   towards the meanhead vector (multiplied by the align scaling factor)
     #
     # In the more general sense of the boids algorithm, the anticrowd vector serves the purpose of
-    # maintaining separation between boids
+    # maintaining separation between boids, the meanpos vector maintains coherence of a group of boids
+    # and the meanhead vector maintains the alignment of a group's headings
     def adjustheading(self, guideboids):
         global separate, align, cohere, velocity, senserange, root_sep
         if len(guideboids) == 0:
@@ -82,12 +100,13 @@ class boid2D():
                         anticrowd[i] = anticrowd[i] - \
                                 (senserange-np.abs(self.pos[i]-boid.pos[i])**2
 
-            # Adjust for 
+            # Convert from sums to mean values
             for i in range(2):
                 meanpos[i] = meanpos[i]/len(guideboids)
                 meanhead[i] = meanhead[i]/len(guideboids)
                 anticrowd[i] = anticrowd[i]/len(guideboids)
-                                                              
+
+            # Adjust heading using calculated values
             for i in range(2):
                 self.heading[i] = self.heading[i] - \
                     separate * anticrowd[i] + \
@@ -107,6 +126,7 @@ class boid2D():
     def movetick(self, bound, multiplier = 1, addnoise = False):
         for i in range(2):
             self.pos[i] = self.pos[i] + self.heading[i]
+            # add 
             if addnoise:
                 global noise
                 self.heading[i] = self.heading[i] + \
@@ -156,9 +176,9 @@ class boidrender():
         if root_sep:
             sepres = 0.1, sepmax = 100.0, sepint = 20
         else:
-                                 sepres = 0.01, sepmax = 1, sepint = 0.1
+            sepres = 0.01, sepmax = 1, sepint = 0.1
         self.ss = tk.Scale(self.win, label = "Separation Weight",\
-                      to = 100.0, resolution = 0.1, command = self.setseparate,\
+                      to = 100.0, resolution = sepres, command = self.setseparate,\
                       tickinterval = 20, length = 250)
         self.ss.set(separate)
         self.ss.grid(column=2, row=0, sticky=tk.W)
