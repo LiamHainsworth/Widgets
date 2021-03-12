@@ -98,7 +98,7 @@ class boid2D():
                                 np.sqrt(senserange-np.abs(boid.pos[i]-self.pos[i]))
                     else:
                         anticrowd[i] = anticrowd[i] - \
-                                (senserange-np.abs(self.pos[i]-boid.pos[i])**2
+                                (senserange-np.abs(self.pos[i]-boid.pos[i]))**2
 
             # Convert from sums to mean values
             for i in range(2):
