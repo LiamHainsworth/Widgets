@@ -4,7 +4,7 @@
 # Date: March 12, 2021
 #
 # Description: A basic 2D implementation of the boids flocking algorithm with capability for
-#       real-time adjustment of algorithm parameters through a series of sliders
+#       real-time adjustment of algorithm parameters through a series of sliders. https://en.wikipedia.org/wiki/Boids
 #
 # Requires tkinter and numpy to be installed
 #
