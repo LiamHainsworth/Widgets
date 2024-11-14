@@ -1,18 +1,18 @@
 #! /usr/bin/env python3
 
 # Author: Liam Hainsworth
-# Date: March 12, 2021
+# Date Created: March 12, 2021
 #
 # Description: A basic 2D implementation of the boids flocking algorithm with capability for
 #       real-time adjustment of algorithm parameters through a series of sliders. https://en.wikipedia.org/wiki/Boids
 #
-# Requires tkinter and numpy to be installed
+# Requires tkinter to be installed
 #
 
 import tkinter as tk
 from tkinter import ttk
 import random
-import numpy as np
+import math
 
 # Object representing a single boid.
 #
@@ -41,8 +41,8 @@ class boid2D():
         self.pos = pos
         self.idnum = idnum
         phi = random.random() * 360.0
-        self.heading = [np.cos(phi)*velocity,
-                        np.sin(phi)*velocity]
+        self.heading = [math.cos(phi)*velocity,
+                        math.sin(phi)*velocity]
         global bounce
         bounce = False
         global root_sep
@@ -54,10 +54,10 @@ class boid2D():
         subarr = []
         for boid in boidarr:
             # Rough (but fast) check
-            if np.abs(boid.pos[0] - self.pos[0]) < senserange and \
-               np.abs(boid.pos[1] - self.pos[1]) < senserange:
+            if math.fabs(boid.pos[0] - self.pos[0]) < senserange and \
+               math.fabs(boid.pos[1] - self.pos[1]) < senserange:
                 # Actual check
-                if np.sqrt((boid.pos[0]-self.pos[0])**2 + \
+                if math.sqrt((boid.pos[0]-self.pos[0])**2 + \
                            (boid.pos[1]-self.pos[1])**2) < senserange:
                     if self.idnum != boid.idnum:
                         subarr.append(boid)
@@ -92,13 +92,13 @@ class boid2D():
                     if root_sep:
                         if boid.pos[i] < self.pos[i]:
                             anticrowd[i] = anticrowd[i] - \
-                                np.sqrt(senserange-np.abs(self.pos[i]-boid.pos[i]))
+                                math.sqrt(senserange-math.fabs(self.pos[i]-boid.pos[i]))
                         else:
                             anticrowd[i] = anticrowd[i] + \
-                                np.sqrt(senserange-np.abs(boid.pos[i]-self.pos[i]))
+                                math.sqrt(senserange-math.fabs(boid.pos[i]-self.pos[i]))
                     else:
                         anticrowd[i] = anticrowd[i] - \
-                                (senserange-np.abs(self.pos[i]-boid.pos[i]))**2
+                                (senserange-math.fabs(self.pos[i]-boid.pos[i]))**2
 
             # Convert from sums to mean values
             for i in range(2):
@@ -114,7 +114,7 @@ class boid2D():
                     align * meanhead[i]                    
 
         # Normalize heading vector and adjust to set velocity (prevent acceleration)
-        magnitude = np.sqrt(self.heading[0]**2 + self.heading[1]**2)
+        magnitude = math.sqrt(self.heading[0]**2 + self.heading[1]**2)
         if magnitude == 0:
             self.heading[0] = 0
             self.heading[1] = 0
